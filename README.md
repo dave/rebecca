@@ -1,2 +1,3 @@
-# rebecca
-Rebecca is a readme generator for Go
+# Rebecca
+
+Rebecca is a readme generator
