@@ -26,7 +26,7 @@ Rebecca will read `README.md.tpl` and overwrite `README.md` with the rendered
 template. The package specified on the command line is parsed (if no package is 
 specified, it is detected from the current working directory). 
 
-The package is scanned, for examples and documentation. Rebecca uses the Go 
+The package is scanned for examples and documentation. Rebecca uses the Go 
 template library, and adds some custom template functions:  
 
 # Example
