@@ -24,7 +24,7 @@ template. See [README.md.tpl](https://github.com/davelondon/jennifer/blob/master
 in the [jennifer](https://github.com/davelondon/jennifer) project for a real world example.
  
 The package specified on the command line is parsed. Examples and documentation 
-is extracted. If no package is specified, it is detected from the current 
+are extracted. If no package is specified, it is detected from the current 
 working directory. Rebecca uses the Go template library, and adds some custom 
 template functions:  
 
