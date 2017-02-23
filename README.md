@@ -61,6 +61,8 @@ You can also specify which sentances to print, using Go slice notation:
 {{ "Foo[:i]" | doc }}
 ```
 
+See [here](https://github.com/davelondon/jennifer/blob/59bf6fa449ab2eb83d8cf6668919a14d4ced325f/README.md.tpl#L51-L58) and [here](https://github.com/davelondon/jennifer/blob/59bf6fa449ab2eb83d8cf6668919a14d4ced325f/README.md.tpl#L286-L299) for real-world examples of this.
+
 # Code, Output
 
 ```
