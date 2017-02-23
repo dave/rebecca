@@ -44,7 +44,7 @@ func main() {
 		"doc":     m.DocFunc,
 	}
 
-	tpl := template.Must(template.New("main").Funcs(funcMap).ParseGlob("*.md.tpl"))
+	tpl := template.Must(template.New("main").Funcs(funcMap).ParseGlob("README.md.tpl"))
 
 	buf := &bytes.Buffer{}
 	if err := tpl.ExecuteTemplate(buf, "README.md.tpl", nil); err != nil {
