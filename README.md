@@ -14,14 +14,14 @@ go get -u github.com/davelondon/rebecca/cmd/becca
 becca [-package={your-package}]
 ```
 
-Rebecca will parse `README.md.tpl` and overwrite `README.md` with the result. See 
-[README.md.tpl](https://github.com/davelondon/jennifer/blob/master/README.md.tpl) 
-in the [jennifer](https://github.com/davelondon/jennifer) project for examples.
+Rebecca will read `README.md.tpl` and overwrite `README.md` with the rendered 
+template. See [README.md.tpl](https://github.com/davelondon/jennifer/blob/master/README.md.tpl) 
+in the [jennifer](https://github.com/davelondon/jennifer) project for a real world example.
  
-The package specified on the command line is parsed and examples and 
-documentation comments are extracted. If no package is specified, it is 
-detected from the current working directory. Rebecca uses the Go template 
-library, and adds some custom template functions:  
+The package specified on the command line is parsed. Examples and documentation 
+is extracted. If no package is specified, it is detected from the current 
+working directory. Rebecca uses the Go template library, and adds some custom 
+template functions:  
 
 # Example
 
