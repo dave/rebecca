@@ -38,7 +38,7 @@ This prints the code and expected output for the `ExampleFoo` example.
 ```
 
 This prints the documentation for `Foo`. All package level declarations are 
-supported (func, var, const etc.)
+supported (`func`, `var`, `const` etc.)
 
 ```
 {{ "Foo.Bar" | doc }}
