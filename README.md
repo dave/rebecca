@@ -5,7 +5,7 @@ Rebecca is a readme generator.
 Managing the GitHub readme for your Go project can be a drag. When creating 
 [jennifer](https://github.com/davelondon/jennifer) I found examples copied into 
 the markdown would get out of date, and documentation was duplicated. I created 
-rebecca to solve this.
+rebecca to solve this: see [README.md.tpl](https://github.com/davelondon/jennifer/blob/master/README.md.tpl) for a real world example.
 
 # Install
 
@@ -20,13 +20,11 @@ becca [-package={your-package}]
 ```
 
 Rebecca will read `README.md.tpl` and overwrite `README.md` with the rendered 
-template. See [README.md.tpl](https://github.com/davelondon/jennifer/blob/master/README.md.tpl) 
-in the [jennifer](https://github.com/davelondon/jennifer) project for a real world example.
- 
-The package specified on the command line is parsed. Examples and documentation 
-are extracted. If no package is specified, it is detected from the current 
-working directory. Rebecca uses the Go template library, and adds some custom 
-template functions:  
+template. The package specified on the command line is parsed (if no package is 
+specified, it is detected from the current working directory). 
+
+The package is scanned, for examples and documentation. Rebecca uses the Go 
+template library, and adds some custom template functions:  
 
 # Example
 
