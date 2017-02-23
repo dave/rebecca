@@ -37,15 +37,15 @@ This prints the code and expected output for the `ExampleFoo` example.
 {{ "Foo" | doc }}
 ```
 
-This prints the documentation comment for `Foo`. All package level declarations 
-are supported (func, var, const etc.)
+This prints the documentation for `Foo`. All package level declarations are 
+supported (func, var, const etc.)
 
 ```
 {{ "Foo.Bar" | doc }}
 ```
 
-This prints the documentation comment for the `Bar` member of the `Foo` type. 
-Methods and struct fields are supported.
+This prints the documentation for the `Bar` member of the `Foo` type. Methods 
+and struct fields are supported.
 
 You can also specify which sentances to print, using Go slice notation:
 
