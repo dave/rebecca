@@ -1,3 +1,4 @@
+// Rebecca is a readme generator.
 package rebecca
 
 import (
