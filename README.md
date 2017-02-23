@@ -5,7 +5,10 @@ Rebecca is a readme generator.
 Managing the GitHub readme for your Go project can be a drag. When creating 
 [jennifer](https://github.com/davelondon/jennifer) I found examples copied into 
 the markdown would get out of date, and documentation was duplicated. I created 
-rebecca to solve this: see [README.md.tpl](https://github.com/davelondon/jennifer/blob/master/README.md.tpl) for a real world example.
+rebecca to solve this: see 
+[README.md.tpl](https://github.com/davelondon/jennifer/blob/master/README.md.tpl) 
+in the [jennifer](https://github.com/davelondon/jennifer) repo for a real world 
+example.
 
 # Install
 
