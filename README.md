@@ -23,7 +23,7 @@ documentation comments are extracted. If no package is specified, it is
 detected from the current working directory. Rebecca uses the Go template 
 library, and adds some custom template functions:  
 
-# Example, Code, Output
+# Example
 
 ```
 {{ "ExampleFoo" | example }}
