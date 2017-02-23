@@ -11,7 +11,7 @@ go get -u github.com/davelondon/rebecca/cmd/becca
 # Usage
 
 ```
-becca -package={your-package}
+becca [-package={your-package}]
 ```
 
 Rebecca will parse `README.md.tpl` and overwrite `README.md` with the result. See 
@@ -19,8 +19,9 @@ Rebecca will parse `README.md.tpl` and overwrite `README.md` with the result. Se
 in the [jennifer](https://github.com/davelondon/jennifer) project for examples.
  
 The package specified on the command line is parsed and examples and 
-documentation comments are extracted. Rebecca uses the Go template library, and 
-adds some custom template functions:  
+documentation comments are extracted. If no package is specified, it is 
+detected from the current working directory. Rebecca uses the Go template 
+library, and adds some custom template functions:  
 
 # Example, Code, Output
 
