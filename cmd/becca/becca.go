@@ -41,7 +41,6 @@ func main() {
 		"example": m.ExampleFunc(false),
 		"code":    m.ExampleFunc(true),
 		"output":  m.OutputFunc,
-		"link":    m.LinkFunc,
 		"doc":     m.DocFunc,
 	}
 

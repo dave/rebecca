@@ -38,7 +38,7 @@ func (m *CodeMap) ExampleFunc(plain bool) func(in string) string {
 	return func(in string) string {
 		e, ok := m.Examples[in]
 		if !ok {
-			return fmt.Sprintf("[example %s not found.]", in)
+			panic(fmt.Sprintf("Example %s not found.", in))
 		}
 		buf := &bytes.Buffer{}
 		if plain {
@@ -71,23 +71,15 @@ func (m *CodeMap) ExampleFunc(plain bool) func(in string) string {
 	}
 }
 
-func (m *CodeMap) LinkFunc(in string) string {
-	return fmt.Sprintf(
-		"[Example](https://godoc.org/%s#example-%s):",
-		m.pkg,
-		strings.Replace(in, "_", "-", -1)[len("Example"):])
-}
-
 func (m *CodeMap) OutputFunc(in string) string {
 	e, ok := m.Examples[in]
 	if !ok {
-		return fmt.Sprintf("[example %s not found.]", in)
+		panic(fmt.Sprintf("Example %s not found.", in))
 	}
 	return strings.Trim(e.Output, "\n")
 }
 
 var docRegex = regexp.MustCompile(`(\w+)\[([0-9:, ]+)\]`)
-var sectionRegex = regexp.MustCompile(`(\d+)(:?)(\d*)`)
 
 func (m *CodeMap) DocFunc(in string) string {
 
@@ -95,52 +87,93 @@ func (m *CodeMap) DocFunc(in string) string {
 		id := matches[1]
 		c, ok := m.Comments[id]
 		if !ok {
-			return fmt.Sprintf("[comment %s not found in.]", id, in)
+			panic(fmt.Sprintf("Doc for %s not found in %s.", id, in))
 		}
-		sentances := strings.Split(c, ".")
-		sections := strings.Split(strings.Replace(matches[2], " ", "", -1), ",")
-		out := ""
-		for _, sectionDef := range sections {
-			var start, end int
-			parts := sectionRegex.FindStringSubmatch(sectionDef)
-			switch {
-			case parts[2] == "":
-				// single sentance index, of the form "i"
-				start, _ = strconv.Atoi(parts[1])
-				end = start + 1
-			case parts[1] == "" && parts[2] == ":":
-				// of the form: "-i"
-				start = 0
-				end, _ = strconv.Atoi(parts[2])
-			case parts[2] == ":" && parts[3] == "":
-				// of the form: "i-"
-				start, _ = strconv.Atoi(parts[1])
-				end = len(sentances) - 1
-			default:
-				// of the form: "i-j"
-				start, _ = strconv.Atoi(parts[1])
-				end, _ = strconv.Atoi(parts[3])
-			}
-			if start >= end {
-				return fmt.Sprintf("[start must be > end in %s]", in)
-			}
-			if end >= len(sentances) {
-				return fmt.Sprintf("[only %d sentances in comment %s]", len(sentances), in)
-			}
-			for _, s := range sentances[start:end] {
-				if s != "\n" {
-					out += s + "."
-				}
-			}
-		}
-		return out
+		return extractSections(in, matches[2], c)
 	}
 
 	c, ok := m.Comments[in]
 	if !ok {
-		return fmt.Sprintf("[comment %s not found.]", in)
+		panic(fmt.Sprintf("Doc for %s not found.", in))
 	}
 	return strings.Trim(c, "\n")
+}
+
+var bothRegex = regexp.MustCompile(`^(\d+):(\d+)$`)
+var fromRegex = regexp.MustCompile(`^(\d+):$`)
+var toRegex = regexp.MustCompile(`^:(\d+)$`)
+var singleRegex = regexp.MustCompile(`^(\d+)$`)
+
+func mustInt(s string) int {
+	i, err := strconv.Atoi(s)
+	if err != nil {
+		// shoulnd't get here because the string has passed a regex
+		panic(err)
+	}
+	return i
+}
+
+func checkBounds(start, end, length int, spec string) {
+
+	if end == 0 {
+		panic(fmt.Sprintf("End must be greater than 0 in %s", spec))
+	}
+
+	if start >= length {
+		panic(fmt.Sprintf("Index %d out of range (length %d) in %s", start, length, spec))
+	}
+
+	if end >= length {
+		panic(fmt.Sprintf("Index %d out of range (length %d) in %s", end, length, spec))
+	}
+
+	if end > -1 && start >= end {
+		panic(fmt.Sprintf("Start must be less than end in %s", spec))
+	}
+}
+
+func extractSections(full string, sections string, comment string) string {
+
+	var sentances []string
+	for _, s := range strings.Split(comment, ".") {
+		// ignore empty sentances
+		trimmed := strings.Trim(s, " \n")
+		if trimmed != "" {
+			sentances = append(sentances, s)
+		}
+	}
+
+	var out string
+	for _, section := range strings.Split(sections, ",") {
+		var arr []string
+		if matches := bothRegex.FindStringSubmatch(section); matches != nil {
+			// "i:j"
+			checkBounds(mustInt(matches[1]), mustInt(matches[2]), len(sentances), full)
+			arr = sentances[mustInt(matches[1]):mustInt(matches[2])]
+		} else if matches := fromRegex.FindStringSubmatch(section); matches != nil {
+			// "i:"
+			checkBounds(mustInt(matches[1]), -1, len(sentances), full)
+			arr = sentances[mustInt(matches[1]):]
+		} else if matches := toRegex.FindStringSubmatch(section); matches != nil {
+			// ":i"
+			checkBounds(-1, mustInt(matches[1]), len(sentances), full)
+			arr = sentances[:mustInt(matches[1])]
+		} else if matches := singleRegex.FindStringSubmatch(section); matches != nil {
+			// "i"
+			checkBounds(mustInt(matches[1]), -1, len(sentances), full)
+			arr = []string{sentances[mustInt(matches[1])]}
+		} else {
+			panic(fmt.Sprintf("Invalid section %s in %s", section, full))
+		}
+
+		for _, s := range arr {
+			s1 := strings.Trim(s, " \n")
+			if s1 != "" {
+				out += s + "."
+			}
+		}
+	}
+	return strings.Trim(out, " ")
 }
 
 func (m *CodeMap) scanTests(name string, p *ast.Package) error {
