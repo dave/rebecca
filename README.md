@@ -2,7 +2,7 @@
 
 Rebecca is a readme generator. 
 
-Managing the Github readme for your Go project can be a drag. When creating 
+Managing the GitHub readme for your Go project can be a drag. When creating 
 [jennifer](https://github.com/davelondon/jennifer) I found examples that I 
 copied into the markdown would get out of date, and documentation was 
 duplicated. I created rebecca to solve this.
