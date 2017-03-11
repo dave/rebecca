@@ -15,16 +15,16 @@ import (
 
 func main() {
 
-	defaultPackage, _ := gopackages.GetPackageFromDir(os.Getenv("GOPATH"), ".")
-	// ignore error - means we can't find a package at the current dir
-
-	pkgFlag := flag.String("package", defaultPackage, "Package to scan")
+	pkgFlag := flag.String("package", "", "Package to scan")
 	flag.Parse()
 	pkg := *pkgFlag
 
 	if pkg == "" {
 		wd, _ := os.Getwd()
-		log.Fatalf("Can't find package at current dir (%s) and no package specified with 'package' flag.", wd)
+		pkg, _ := gopackages.GetPackageFromDir(os.Getenv("GOPATH"), wd)
+		if pkg == "" {
+			log.Fatalf("Can't find package at current dir (%s) and no package specified with 'package' flag.", wd)
+		}
 	}
 
 	dir, err := gopackages.GetDirFromPackage(os.Environ(), os.Getenv("GOPATH"), pkg)

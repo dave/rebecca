@@ -42,33 +42,40 @@ func (m *CodeMap) ExampleFunc(plain bool) func(in string) string {
 			panic(fmt.Sprintf("Example %s not found.", in))
 		}
 		buf := &bytes.Buffer{}
+
+		cn := &printer.CommentedNode{e.Code, e.Comments}
+
 		if plain {
-			printer.Fprint(buf, m.fset, e.Code)
+			printer.Fprint(buf, m.fset, cn)
 			out := buf.String()
 			if strings.HasSuffix(out, "\n\n}") {
 				// fix annoying line-feed before end brace
 				out = out[:len(out)-2] + "}"
 			}
+			o := "\n\t// Output:"
+			if strings.Contains(out, o) {
+				// Nasty kludge to remove the output...
+				// TODO: Fix this
+				out = out[:strings.Index(out, o)] + "\n}"
+			}
 			return out
 		}
-		if bs, ok := e.Code.(*ast.BlockStmt); ok {
-			for _, s := range bs.List {
-				printer.Fprint(buf, m.fset, s)
-				buf.WriteString("\n")
-			}
+
+		if _, ok := e.Code.(*ast.BlockStmt); ok {
+			// We have to remove the block manually
+			// or comments don't print
+			buf1 := &bytes.Buffer{}
+			printer.Fprint(buf1, m.fset, cn)
+			s := buf1.String()
+			s = s[1 : len(s)-1]
+			s = strings.TrimSpace(strings.Replace(s, "\n\t", "\n", -1))
+			buf.WriteString(s)
 		} else {
-			printer.Fprint(buf, m.fset, e.Code)
+			printer.Fprint(buf, m.fset, cn)
 		}
-		quotes := "```"
-		return fmt.Sprintf(`%sgo
-%s
-// Output:
-// %s
-%s`,
-			quotes,
-			strings.Trim(buf.String(), "\n"),
-			strings.Replace(strings.Trim(e.Output, "\n"), "\n", "\n// ", -1),
-			quotes)
+
+		return fmt.Sprintf("```go\n%s\n```", strings.Trim(buf.String(), "\n"))
+
 	}
 }
 
@@ -178,7 +185,10 @@ func extractSections(full string, sections string, comment string) string {
 }
 
 func (m *CodeMap) scanTests(name string, p *ast.Package) error {
-	for _, f := range p.Files {
+	for name, f := range p.Files {
+		if !strings.HasSuffix(name, "_test.go") {
+			continue
+		}
 		examples := doc.Examples(f)
 		for _, ex := range examples {
 			m.Examples["Example"+ex.Name] = ex
@@ -255,10 +265,8 @@ func (m *CodeMap) scanDir() error {
 		return err
 	}
 	for name, p := range pkgs {
-		if strings.HasSuffix(name, "_test") {
-			if err := m.scanTests(name, p); err != nil {
-				return err
-			}
+		if err := m.scanTests(name, p); err != nil {
+			return err
 		}
 		if err := m.scanPkg(name, p); err != nil {
 			return err
