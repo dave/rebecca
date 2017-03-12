@@ -3,17 +3,17 @@
 Rebecca is a readme generator. 
 
 Managing the GitHub readme for your Go project can be a drag. When creating 
-[jennifer](https://github.com/davelondon/jennifer) I found examples copied into 
+[jennifer](https://github.com/dave/jennifer) I found examples copied into 
 the markdown would get out of date, and documentation was duplicated. I created 
 rebecca to solve this: see 
-[README.md.tpl](https://github.com/davelondon/jennifer/blob/master/README.md.tpl) 
-in the [jennifer](https://github.com/davelondon/jennifer) repo for a real world 
+[README.md.tpl](https://github.com/dave/jennifer/blob/master/README.md.tpl) 
+in the [jennifer](https://github.com/dave/jennifer) repo for a real world 
 example.
 
 # Install
 
 ```
-go get -u github.com/davelondon/rebecca/cmd/becca
+go get -u github.com/dave/rebecca/cmd/becca
 ```
 
 # Usage
@@ -62,7 +62,7 @@ You can also specify which sentances to print, using Go slice notation:
 {{ "Foo[:i]" | doc }}
 ```
 
-See [here](https://github.com/davelondon/jennifer/blob/5f1e5084f7fff920e11d5b9098e5ae8089136a1a/README.md.tpl#L51-L58) and [here](https://github.com/davelondon/jennifer/blob/5f1e5084f7fff920e11d5b9098e5ae8089136a1a/README.md.tpl#L286-L299) for real-world examples of this.
+See [here](https://github.com/dave/jennifer/blob/5f1e5084f7fff920e11d5b9098e5ae8089136a1a/README.md.tpl#L51-L58) and [here](https://github.com/dave/jennifer/blob/5f1e5084f7fff920e11d5b9098e5ae8089136a1a/README.md.tpl#L286-L299) for real-world examples of this.
 
 # Code, Output
 

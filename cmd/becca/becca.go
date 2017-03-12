@@ -9,8 +9,8 @@ import (
 
 	"log"
 
-	"github.com/davelondon/gopackages"
-	"github.com/davelondon/rebecca"
+	"github.com/dave/gopackages"
+	"github.com/dave/rebecca"
 )
 
 func main() {
