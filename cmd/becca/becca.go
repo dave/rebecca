@@ -10,17 +10,19 @@ import (
 	"text/template"
 
 	"github.com/dave/gopackages"
+	"github.com/dave/jennifer/jen"
 	"github.com/dave/rebecca"
 )
 
 var flags struct {
-	pkg, input, output string
+	pkg, input, output, literals string
 }
 
 func init() {
 	flag.StringVar(&flags.pkg, "package", "", "Package to scan")
 	flag.StringVar(&flags.input, "input", "README.md.tpl", "Input file")
 	flag.StringVar(&flags.output, "output", "", "Output file, defaults to the input without the .tpl suffix")
+	flag.StringVar(&flags.literals, "literals", "", "Output Go file, containing map of doc literals")
 }
 
 func abort(s string, vv ...interface{}) {
@@ -93,4 +95,20 @@ func main() {
 		abort("can't write output, %s\n", err.Error())
 		return
 	}
+
+	if flags.literals != "" {
+		f := jen.NewFile(m.Name)
+		f.Var().Id("doc").Op("=").Map(jen.String()).String().Values(
+			jen.DictFunc(func(d jen.Dict) {
+				for k, v := range m.Comments {
+					d[jen.Lit(k)] = jen.Lit(strings.TrimSpace(v))
+				}
+			}),
+		)
+		if err := f.Save(flags.literals); err != nil {
+			abort("can't write literals file, %s\n", err.Error())
+			return
+		}
+	}
+
 }

@@ -9,6 +9,7 @@ import (
 	"go/parser"
 	"go/printer"
 	"go/token"
+	"path/filepath"
 	"regexp"
 	"strconv"
 	"strings"
@@ -30,6 +31,7 @@ func NewCodeMap(pkg string, dir string) (*CodeMap, error) {
 type CodeMap struct {
 	pkg      string
 	dir      string
+	Name     string
 	fset     *token.FileSet
 	Examples map[string]*doc.Example
 	Comments map[string]string
@@ -198,7 +200,11 @@ func (m *CodeMap) scanTests(name string, p *ast.Package) error {
 }
 
 func (m *CodeMap) scanPkg(name string, p *ast.Package) error {
-	for _, f := range p.Files {
+	for fpath, f := range p.Files {
+		if f.Doc.Text() != "" {
+			_, name := filepath.Split(fpath)
+			m.Comments[strings.Replace(name, ".", "_", -1)] = f.Doc.Text()
+		}
 		for _, d := range f.Decls {
 			switch d := d.(type) {
 			case *ast.FuncDecl:
@@ -224,9 +230,6 @@ func (m *CodeMap) scanPkg(name string, p *ast.Package) error {
 					m.Comments[name] = d.Doc.Text()
 				}
 			case *ast.GenDecl:
-				if d.Doc.Text() == "" {
-					continue
-				}
 				switch s := d.Specs[0].(type) {
 				case *ast.TypeSpec:
 					//fmt.Println(s.Name, d.Doc.Text())
@@ -244,6 +247,9 @@ func (m *CodeMap) scanPkg(name string, p *ast.Package) error {
 						}
 					}
 				case *ast.ValueSpec:
+					if d.Doc.Text() == "" {
+						continue
+					}
 					//fmt.Println(s.Names[0], d.Doc.Text())
 					if len(s.Names) == 0 {
 						continue
@@ -265,6 +271,7 @@ func (m *CodeMap) scanDir() error {
 		return err
 	}
 	for name, p := range pkgs {
+		m.Name = strings.TrimSuffix(name, "_test")
 		if err := m.scanTests(name, p); err != nil {
 			return err
 		}
