@@ -13,7 +13,7 @@ example.
 # Install
 
 ```
-go get -u github.com/dave/rebecca/cmd/becca
+go install github.com/dave/rebecca/cmd/becca@latest
 ```
 
 # Usage
